@@ -2,9 +2,11 @@ FROM python
 
 ADD . /app
 
+RUN apt update \
+	&& apt-get install wkhtmltopdf xvfb -y
+
 WORKDIR /app
 
-RUN apt-get install wkhtmltopdf -y
 RUN pip install -r requirements.txt
 
 CMD ["python", "telegram_update.py"]
