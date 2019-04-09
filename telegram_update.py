@@ -19,7 +19,7 @@ from zipfile import ZipFile
 #config = imgkit.config(wkhtmltoimage='C:/Program Files/wkhtmltopdf/bin/wkhtmltoimage.exe')
 
 try:
-    adminKeyFile = open('adminKey.txt','r')
+    adminKeyFile = open('./adminKey.txt','r')
     adminKey = adminKeyFile.read()
 except FileNotFoundError:
     adminKey = 'admin'
@@ -94,8 +94,8 @@ def update(chat_id=-1):
         if chat_id != -1:
             bot.sendMessage(chat_id, 'There is currently no users using my service')
         return
-    with open('haze_status.png', 'rb') as haze_photo:
-        with open('dengue_status.png', 'rb') as dengue_photo:
+    with open('./haze_status.png', 'rb') as haze_photo:
+        with open('./dengue_status.png', 'rb') as dengue_photo:
             for user_info in users:
 
                 bot.sendMessage(user_info[0], 'HAZE STATUS will be summarized and displayed here shortly')
@@ -111,10 +111,10 @@ def crawling_dengue_data(url='https://data.gov.sg/dataset/e7536645-6126-4358-b95
     resp = requests.get(url).content
     zipfile = ZipFile(BytesIO(resp))
 
-    dengue_data = json.load(zipfile.open('dengue-clusters-geojson.geojson', 'r'))
+    dengue_data = json.load(zipfile.open('./dengue-clusters-geojson.geojson', 'r'))
     dengue_status = {'LOCATION': [], 'CASE_SIZE': []}
     today = datetime.today().replace(microsecond=0)
-    pickle.dump(today, open('today.obj','wb'))
+    pickle.dump(today, open('./today.obj','wb'))
 
     for feature in dengue_data['features']:
         soup = BS(feature['properties']['Description'], 'html.parser')
@@ -130,11 +130,11 @@ def crawling_dengue_data(url='https://data.gov.sg/dataset/e7536645-6126-4358-b95
                 dengue_status['CASE_SIZE'].append(child.td.string)
                 break
     dengue_status = pd.DataFrame(dengue_status)
-    text_file = open('dengue_status.html', 'w+')
+    text_file = open('./dengue_status.html', 'w+')
     text_file.write(css)
     text_file.write(dengue_status.to_html())
     text_file.close()
-    imgkit.from_file("dengue_status.html", "dengue_status.png", options=imgkitoptions)
+    imgkit.from_file("./dengue_status.html", "./dengue_status.png", options=imgkitoptions)
 
 
 MessageLoop(bot, {'chat':handle}).run_as_thread()
@@ -142,7 +142,7 @@ MessageLoop(bot, {'chat':handle}).run_as_thread()
 schedule.every(10).seconds.do(update)
 schedule.every().day.do(crawling_dengue_data)
 
-css = open('CSS.txt', 'r').read()
+css = open('./CSS.txt', 'r').read()
 
 imgkitoptions = {"format": "png",
                  "crop-w": '700',
@@ -153,15 +153,8 @@ global haze_response
 global today
 
 while True:
-    if not os.path.isfile('D:/CZ3003 - SOFTWARE SYSTEM ANALYSIS & DESIGN/dengue_status.png'):
-        crawling_dengue_data()
-        today = pickle.load(open('today.obj','rb'))
-    else:
-        today_file = pickle.load(open('today.obj','rb'))
-        today = datetime.today()
-        if (today.year, today.month, today.day) != (today_file.year, today_file.month, today_file.day):
-            crawling_dengue_data()
-        else: today = today_file
+    crawling_dengue_data()
+    today = pickle.load(open('./today.obj','rb'))
     haze_response = requests.get(url).json()
     haze_status = {}
     haze_status = {'POLUTION_INDEX_TYPE': [],'WEST': [], 'NATIONAL': [], 'EAST': [], 'CENTRAL': [], 'SOUTH': [], 'NORTH': []}
@@ -171,11 +164,11 @@ while True:
             haze_status[region.upper()].append(index_val)
     haze_status = pd.DataFrame(haze_status)
     haze_status = haze_status[['POLUTION_INDEX_TYPE', 'WEST', 'NATIONAL', 'EAST', 'CENTRAL', 'SOUTH', 'NORTH']]
-    text_file = open('haze_status.html', 'w+')
+    text_file = open('./haze_status.html', 'w+')
     text_file.write(css)
     text_file.write(haze_status.to_html())
     text_file.close()
-    imgkit.from_file("haze_status.html", "haze_status.png", options=imgkitoptions)
+    imgkit.from_file("./haze_status.html", "./haze_status.png", options=imgkitoptions)
     schedule.run_pending()
     time.sleep(10)
 
