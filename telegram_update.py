@@ -139,7 +139,7 @@ def crawling_dengue_data(url='https://data.gov.sg/dataset/e7536645-6126-4358-b95
 
 MessageLoop(bot, {'chat':handle}).run_as_thread()
 
-schedule.every(10).seconds.do(update)
+schedule.every(30).seconds.do(update)
 schedule.every().day.do(crawling_dengue_data)
 
 css = open('./CSS.txt', 'r').read()
@@ -170,8 +170,4 @@ while True:
     text_file.close()
     imgkit.from_file("./haze_status.html", "./haze_status.png", options=imgkitoptions)
     schedule.run_pending()
-    time.sleep(10)
-
-
-
-
+    time.sleep(30)
