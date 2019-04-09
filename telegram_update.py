@@ -55,8 +55,6 @@ def handle(msg):
         manual_update(chat_id)
     else:
         bot.sendMessage(chat_id, "Unregconized command, please refer to the command list to choose")
-    print(db.user_list())
-
 
 def weekly_update(chat_id):
     if not db.is_existed(chat_id):
@@ -111,7 +109,7 @@ def crawling_dengue_data(url='https://data.gov.sg/dataset/e7536645-6126-4358-b95
     resp = requests.get(url).content
     zipfile = ZipFile(BytesIO(resp))
 
-    dengue_data = json.load(zipfile.open('./dengue-clusters-geojson.geojson', 'r'))
+    dengue_data = json.load(zipfile.open('dengue-clusters-geojson.geojson', 'r'))
     dengue_status = {'LOCATION': [], 'CASE_SIZE': []}
     today = datetime.today().replace(microsecond=0)
     pickle.dump(today, open('./today.obj','wb'))
