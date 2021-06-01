@@ -19,5 +19,5 @@ six==1.12.0
 soupsieve==1.9
 telepot==12.7
 typing-extensions==3.7.2
-urllib3==1.24.1
+urllib3==1.26.5
 yarl==1.3.0
